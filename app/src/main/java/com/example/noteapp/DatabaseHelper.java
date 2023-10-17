@@ -70,4 +70,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return cursor;
     }
+
+    void UpdateData(Note note){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_TITLE, note.Title);
+        cv.put(COLUMN_CONTENT, note.Description);
+        cv.put(COLUMN_STATUS, note.Status);
+
+        long result = db.update(TABLE_NAME, cv, "_id=?", new String[]{note.Id.toString()});
+
+        if (result == -1){
+            Toast.makeText(context, "Failed to update!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Updated Successfully!", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

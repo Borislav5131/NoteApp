@@ -1,6 +1,8 @@
 package com.example.noteapp;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +16,13 @@ import java.util.ArrayList;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
     private Context context;
+    Activity activity;
     private ArrayList<Note> notes;
 
-    CustomAdapter(Context context, ArrayList<Note> notes) {
+    int position;
+
+    CustomAdapter(Activity activity, Context context, ArrayList<Note> notes) {
+        this.activity = activity;
         this.context = context;
         this.notes = notes;
     }
@@ -31,11 +37,24 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(@NonNull CustomAdapter.MyViewHolder holder, int position) {
+        this.position = position;
+
         holder.note_id_txt.setText(String.valueOf(notes.get(position).Id));
         holder.note_title_txt.setText(String.valueOf(notes.get(position).Title));
         holder.note_description_txt.setText(String.valueOf(notes.get(position).Description));
         holder.note_status_txt.setText(String.valueOf(notes.get(position).Status));
 
+        holder.mainLayout.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+                Intent intent = new Intent(context, UpdateActivity.class);
+                intent.putExtra("id", String.valueOf(notes.get(position).Id));
+                intent.putExtra("title", String.valueOf(notes.get(position).Title));
+                intent.putExtra("description", String.valueOf(notes.get(position).Description));
+                intent.putExtra("status", String.valueOf(notes.get(position).Status));
+                activity.startActivityForResult(intent, 1);
+            }
+        });
     }
 
     @Override
