@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,12 +31,28 @@ public class AddActivity extends AppCompatActivity {
         add_button = findViewById(R.id.add_button);
 
         add_button.setOnClickListener(v -> {
-            DatabaseHelper db = new DatabaseHelper(AddActivity.this);
-            db.AddNote(title_input.getText().toString().trim(), description_input.getText().toString().trim(), status_input.getSelectedItem().toString().trim());
+            try {
+                if(!Validation.ValidateTitle(title_input.getText().toString().trim())){
+                    throw new Exception("Invalid title!");
+                }
 
-            //Refresh recycle view
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+                if(!Validation.ValidateDescription(description_input.getText().toString().trim())){
+                    throw new Exception("Invalid description!");
+                }
+
+                if(!Validation.ValidateStatus(status_input.getSelectedItem().toString().trim())){
+                    throw new Exception("Invalid status!");
+                }
+
+                DatabaseHelper db = new DatabaseHelper(AddActivity.this);
+                db.AddNote(title_input.getText().toString().trim(), description_input.getText().toString().trim(), status_input.getSelectedItem().toString().trim());
+
+                //Refresh recycle view
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+            } catch (Exception ex) {
+                Toast.makeText(getApplicationContext(), "Exception:" + ex.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
         });
     }
 

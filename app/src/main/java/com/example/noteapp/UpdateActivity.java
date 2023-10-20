@@ -40,14 +40,31 @@ public class UpdateActivity extends AppCompatActivity {
         update_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseHelper db = new DatabaseHelper(UpdateActivity.this);
-                Note note = new Note();
-                note.Id = Integer.parseInt(id);
-                note.Title = title_input.getText().toString().trim();
-                note.Description = description_input.getText().toString().trim();
-                note.Status = status_input.getSelectedItem().toString().trim();
-                db.UpdateData(note);
-                finish();
+                try {
+                    if(!Validation.ValidateTitle(title_input.getText().toString().trim())){
+                        throw new Exception("Invalid title!");
+                    }
+
+                    if(!Validation.ValidateDescription(description_input.getText().toString().trim())){
+                        throw new Exception("Invalid description!");
+                    }
+
+                    if(!Validation.ValidateStatus(status_input.getSelectedItem().toString().trim())){
+                        throw new Exception("Invalid status!");
+                    }
+
+                    DatabaseHelper db = new DatabaseHelper(UpdateActivity.this);
+                    Note note = new Note();
+                    note.Id = Integer.parseInt(id);
+                    note.Title = title_input.getText().toString().trim();
+                    note.Description = description_input.getText().toString().trim();
+                    note.Status = status_input.getSelectedItem().toString().trim();
+                    db.UpdateData(note);
+                    finish();
+
+                } catch (Exception ex) {
+                    Toast.makeText(getApplicationContext(), "Exception:" + ex.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         });
 
