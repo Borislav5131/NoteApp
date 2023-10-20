@@ -1,5 +1,6 @@
 package com.example.noteapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -31,6 +32,10 @@ public class AddActivity extends AppCompatActivity {
         add_button.setOnClickListener(v -> {
             DatabaseHelper db = new DatabaseHelper(AddActivity.this);
             db.AddNote(title_input.getText().toString().trim(), description_input.getText().toString().trim(), status_input.getSelectedItem().toString().trim());
+
+            //Refresh recycle view
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
         });
     }
 
