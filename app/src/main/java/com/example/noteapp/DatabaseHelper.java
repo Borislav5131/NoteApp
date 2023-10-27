@@ -20,9 +20,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_CONTENT = "note_content";
     private static final String COLUMN_STATUS = "note_status";
 
+    private NoteAppApi api;
+
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
+        api = new NoteAppApi();
     }
 
     @Override
@@ -57,6 +60,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             Toast.makeText(context, "Successfully added a note!", Toast.LENGTH_LONG).show();
         }
+
+        api.createNote(title, description, status, new NoteAppApi.ApiCallback() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(context, "Successfully added a note to API!", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(context, "Failed adding a note to API!", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public Cursor ReadData() {
@@ -67,6 +82,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if(db != null) {
             cursor = db.rawQuery(query, null);
         }
+
+        api.getNotes(new NoteAppApi.ApiCallback() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(context, "Successfully read notes from API!", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(context, "Failed to read notes from API!", Toast.LENGTH_LONG).show();
+            }
+        });
 
         return cursor;
     }
@@ -85,6 +112,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             Toast.makeText(context, "Successfully updated!", Toast.LENGTH_SHORT).show();
         }
+
+        api.updateNote(note.Id, note.Title, note.Description, note.Status, new NoteAppApi.ApiCallback() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(context, "Successfully updated to API!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(context, "Failed to update to API!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     void Delete(String row_id) {
@@ -96,5 +135,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             Toast.makeText(context, "Successfully deleted!", Toast.LENGTH_SHORT).show();
         }
+
+        api.deleteNote(Integer.parseInt(row_id), new NoteAppApi.ApiCallback() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(context, "Successfully deleted from API!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(context, "Failed to deleted from API!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
